@@ -1,7 +1,8 @@
 DataScience
 ==============================
 
-An overarching repository for data analysis and machine learning.
+This repository is intended to be used as the home base for all machine learning and data analysis
+ endeavours. 
 
 Project Organization
 ------------
