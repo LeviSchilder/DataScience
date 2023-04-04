@@ -43,6 +43,23 @@ FROM open_meteo.weerdata_per_uur
 ORDER BY datum_tijd ASC
 """)
 
+query_historie= text("""
+SELECT date_trunc('hour', answer_time) AS datetime
+     , count(*) 																					AS calls
+	 , count(*) 			FILTER (WHERE gesprekstijd <= '00:00:05' and wachttijd > '00:00:30') 	AS ophangers
+	 , count(*) 			FILTER (WHERE gesprekstijd <= '00:00:05' and wachttijd <= '00:00:30') 	AS verkeerd_bellers
+	 , AVG(gesprekstijd) 	FILTER (WHERE gesprekstijd > '00:00:05') 								AS gemiddelde_gesprekstijd
+	 , AVG(wachttijd) 		FILTER (WHERE gesprekstijd > '00:00:05') 								AS gemiddelde_wachttijd
+FROM   onze_huisartsen.telefonie_historie
+WHERE wachtrij = 'PATIENTEN'
+GROUP  BY 1
+ORDER BY datetime ASC
+""")
+
+query_hashed = text("""
+SELECT * FROM onze_huisartsen.telefonie_gehashed
+""")
+
 
 # # Extract data from DB and save to csv
 
@@ -54,3 +71,14 @@ ORDER BY datum_tijd ASC
 
 # wachttijd = pd.read_sql(query_wachttijd, dbConnection)
 # wachttijd.to_csv(f"{filepath}/raw/wachttijd.csv", index=False)
+
+# data_hashed = pd.read_sql(query_hashed, dbConnection)
+# data_hashed.to_csv(f"{DATAPATH}/raw/data_hashed.csv", sep='±', index=False)
+
+
+# Absolute path of a file
+old_name = "C:/Topicus/Repos/DataScience/src/models/terugbellers.py"
+new_name = "C:/Topicus/Repos/DataScience/src/models/process_terugbellers.py"
+
+# Renaming the file
+os.rename(old_name, new_name)
